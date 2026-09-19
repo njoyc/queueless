@@ -8,6 +8,45 @@ The application combines REST APIs with WebSockets to provide real-time queue up
 
 ---
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="screenshots/home-page.png" width="100%" />
+      <p align="center"><b>Home Page</b></p>
+    </td>
+    <td width="50%">
+      <img src="screenshots/customer-dashboard.png" width="100%" />
+      <p align="center"><b>Customer Dashboard</b></p>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%">
+      <img src="screenshots/appointments.png" width="100%" />
+      <p align="center"><b>Appointments</b></p>
+    </td>
+    <td width="50%">
+      <img src="screenshots/customer-queue.png" width="100%" />
+      <p align="center"><b>Customer Queue</b></p>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%">
+      <img src="screenshots/staff-dashboard.png" width="100%" />
+      <p align="center"><b>Staff Dashboard</b></p>
+    </td>
+    <td width="50%">
+      <img src="screenshots/realtime-queue.gif" width="100%" />
+      <p align="center"><b>Real-time Queue Updates</b></p>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Features
 
 ### Customer

@@ -26,29 +26,33 @@ function Services() {
     loadServices();
   }, []);
 
-  async function joinQueue(serviceId) {
-    setJoining(serviceId);
-    setError("");
+async function joinQueue(serviceId) {
+  setJoining(serviceId);
+  setError("");
 
-    try {
-      await api.post("/queue/join", {
-        service_id: serviceId,
-      });
+  try {
+    await api.post("/queue/join", {
+      service_id: serviceId,
+    });
 
-      navigate(`/queue/${serviceId}`);
-    } catch (err) {
+    localStorage.setItem("active_queue_service_id", serviceId);
+
+    navigate(`/queue/${serviceId}`);
+  } catch (err) {
     const detail = err.response?.data?.detail;
 
     if (detail === "You are already in this queue") {
-        navigate(`/queue/${serviceId}`);
-        return;
+      localStorage.setItem("active_queue_service_id", serviceId);
+
+      navigate(`/queue/${serviceId}`);
+      return;
     }
 
     setError(detail || "Could not join queue.");
-    } finally {
-      setJoining(null);
-    }
+  } finally {
+    setJoining(null);
   }
+}
 
   if (loading) {
     return (

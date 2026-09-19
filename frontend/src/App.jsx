@@ -12,6 +12,7 @@ import { useState } from "react";
 import api from "./services/api";
 import Services from "./pages/Services";
 import "./index.css";
+import "./App.css";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import QueuePage from "./pages/QueuePage";
 import StaffDashboard from "./pages/StaffDashboard";
@@ -37,6 +38,17 @@ function ProtectedRoute({ children, roles }) {
 function Layout({ children }) {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  function goToMyQueue() {
+    const serviceId = localStorage.getItem("active_queue_service_id");
+
+    if (serviceId) {
+      navigate(`/queue/${serviceId}`);
+    }
+
+    setMenuOpen(false);
+  }
 
   const isStaff = user?.role === "staff" || user?.role === "admin";
 
@@ -70,7 +82,13 @@ function Layout({ children }) {
             <>
               <Link to="/services">Services</Link>
               <Link to="/appointments">Appointments</Link>
-              <Link to="/queue">My Queue</Link>
+              <button
+                type="button"
+                className="nav-link-button"
+                onClick={goToMyQueue}
+              >
+                My Queue
+              </button>
             </>
           )}
         </div>
@@ -148,9 +166,13 @@ function Layout({ children }) {
                 Appointments
               </Link>
 
-              <Link to="/queue" onClick={closeMenu}>
+              <button
+                type="button"
+                className="mobile-menu-link"
+                onClick={goToMyQueue}
+              >
                 My Queue
-              </Link>
+              </button>
 
               <Link to="/dashboard" onClick={closeMenu}>
                 Dashboard

@@ -24,6 +24,8 @@ function QueuePage() {
   }
 
   useEffect(() => {
+    localStorage.setItem("active_queue_service_id", serviceId);
+
     loadQueue();
 
     const ws = new WebSocket(

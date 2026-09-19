@@ -11,6 +11,7 @@
   &:hover {
     border-color: var(--accent-border);
   }
+
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -42,8 +43,8 @@
     z-index: 1;
     top: 34px;
     height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
+    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg)
+      rotateY(39deg) scale(1.4);
   }
 
   .vite {
@@ -51,8 +52,8 @@
     top: 107px;
     height: 26px;
     width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
+    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg)
+      rotateY(39deg) scale(0.8);
   }
 }
 
@@ -78,6 +79,7 @@
   & > div {
     flex: 1 1 0;
     padding: 32px;
+
     @media (max-width: 1024px) {
       padding: 24px 20px;
     }
@@ -130,6 +132,7 @@
     &:hover {
       box-shadow: var(--shadow);
     }
+
     .button-icon {
       height: 18px;
       width: 18px;
@@ -156,6 +159,7 @@
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
+
   @media (max-width: 1024px) {
     height: 48px;
   }
@@ -177,12 +181,17 @@
     left: 0;
     border-left-color: var(--border);
   }
+
   &::after {
     right: 0;
     border-right-color: var(--border);
   }
 }
 
+
+/* ============================= */
+/* MOBILE MENU                   */
+/* ============================= */
 
 .menu-toggle {
   display: none;
@@ -247,18 +256,38 @@
   padding-top: 24px;
 }
 
-.mobile-menu-links a {
+
+/* ============================= */
+/* MOBILE MENU LINKS + BUTTONS   */
+/* ============================= */
+
+.mobile-menu-links a,
+.mobile-menu-links button {
   display: block;
+  width: 100%;
   padding: 14px 12px;
   border-radius: 8px;
   color: #171717;
   font-size: 16px;
   font-weight: 500;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.mobile-menu-links a:hover {
+.mobile-menu-links a:hover,
+.mobile-menu-links button:hover {
   background: #e9e9e2;
 }
+
+
+/* ============================= */
+/* MOBILE LOGOUT                 */
+/* ============================= */
 
 .mobile-logout {
   width: 100%;
@@ -269,5 +298,14 @@
   background: #171717;
   color: white;
   font-weight: 600;
+  cursor: pointer;
+}
+
+.nav-link-button {
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
 }
