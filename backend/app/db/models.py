@@ -63,7 +63,49 @@ class Service(Base):
         DateTime,
         default=datetime.utcnow,
     )
-    
+
+class AppointmentStatus(str, Enum):
+    BOOKED = "booked"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
+
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    service_id: Mapped[int] = mapped_column(
+        ForeignKey("services.id"),
+        nullable=False,
+    )
+
+    start_time: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+    )
+
+    end_time: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+    )
+
+    status: Mapped[AppointmentStatus] = mapped_column(
+        SQLEnum(AppointmentStatus),
+        default=AppointmentStatus.BOOKED,
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+    )
+
 class User(Base):
     __tablename__ = "users"
 
