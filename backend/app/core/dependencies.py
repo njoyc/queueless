@@ -16,6 +16,7 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ) -> User:
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -48,10 +49,22 @@ def get_current_user(
 
     return user
 
+
 def require_roles(*allowed_roles: UserRole):
+
     def role_checker(
         current_user: User = Depends(get_current_user),
     ) -> User:
+
+        print(
+            "ROLE DEBUG:",
+            current_user.email,
+            current_user.role,
+            type(current_user.role),
+            "ALLOWED:",
+            allowed_roles,
+        )
+
         if current_user.role not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

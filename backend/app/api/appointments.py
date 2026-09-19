@@ -3,17 +3,19 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, require_roles
 from app.db.database import get_db
 from app.db.models import (
     Appointment,
     AppointmentStatus,
     Service,
     User,
+    UserRole,
 )
 from app.schemas.appointment import (
     AppointmentCreate,
     AppointmentResponse,
+    StaffAppointmentResponse,
 )
 
 
@@ -90,6 +92,73 @@ def get_my_appointments(
         .order_by(Appointment.start_time)
         .all()
     )
+
+@router.get(
+    "/staff/all",
+    response_model=list[StaffAppointmentResponse],
+)
+def get_all_appointments_for_staff(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_roles(UserRole.STAFF, UserRole.ADMIN)
+    ),
+):
+    appointments = (
+        db.query(Appointment, User, Service)
+        .join(User, Appointment.user_id == User.id)
+        .join(Service, Appointment.service_id == Service.id)
+        .order_by(Appointment.start_time.asc())
+        .all()
+    )
+
+    return [
+        StaffAppointmentResponse(
+            id=appointment.id,
+            user_id=user.id,
+            user_name=user.name,
+            user_email=user.email,
+            service_id=service.id,
+            service_name=service.name,
+            start_time=appointment.start_time,
+            end_time=appointment.end_time,
+            status=appointment.status,
+            created_at=appointment.created_at,
+        )
+        for appointment, user, service in appointments
+    ]
+
+@router.patch(
+    "/{appointment_id}/complete",
+    response_model=AppointmentResponse,
+)
+def complete_appointment(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_roles(UserRole.STAFF, UserRole.ADMIN)
+    ),
+):
+    appointment = db.get(Appointment, appointment_id)
+
+    if appointment is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Appointment not found",
+        )
+
+    if appointment.status != AppointmentStatus.BOOKED:
+        raise HTTPException(
+            status_code=400,
+            detail="Only booked appointments can be completed",
+        )
+
+    appointment.status = AppointmentStatus.COMPLETED
+
+    db.commit()
+    db.refresh(appointment)
+
+    return appointment
+
 
 @router.patch(
     "/{appointment_id}/cancel",

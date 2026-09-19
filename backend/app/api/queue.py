@@ -122,14 +122,11 @@ async def join_queue(
 
     return entry
 
-@router.get(
-    "/{service_id}/status",
-    response_model=QueueStatusResponse,
-)
-def queue_status(
+@router.get("/{service_id}/status", response_model=QueueStatusResponse)
+def get_queue_status(
     service_id: int,
-    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     waiting_entries = (
         db.query(QueueEntry)
@@ -137,7 +134,7 @@ def queue_status(
             QueueEntry.service_id == service_id,
             QueueEntry.status == QueueStatus.WAITING,
         )
-        .order_by(QueueEntry.joined_at)
+        .order_by(QueueEntry.token_number.asc())
         .all()
     )
 
@@ -162,23 +159,30 @@ def queue_status(
         .first()
     )
 
-    position = None
+    waiting_count = len(waiting_entries)
+
+    my_position = None
 
     if my_entry and my_entry.status == QueueStatus.WAITING:
-        position = next(
-            (
-                index + 1
-                for index, entry in enumerate(waiting_entries)
-                if entry.id == my_entry.id
-            ),
-            None,
+        my_position = (
+            sum(
+                1
+                for entry in waiting_entries
+                if entry.token_number < my_entry.token_number
+            )
+            + 1
         )
 
     return QueueStatusResponse(
         service_id=service_id,
-        waiting_count=len(waiting_entries),
+        waiting_count=waiting_count,
         current_token=(
             serving_entry.token_number
+            if serving_entry
+            else None
+        ),
+        current_entry_id=(
+            serving_entry.id
             if serving_entry
             else None
         ),
@@ -187,7 +191,7 @@ def queue_status(
             if my_entry
             else None
         ),
-        my_position=position,
+        my_position=my_position,
     )
 
 

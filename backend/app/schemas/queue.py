@@ -22,5 +22,6 @@ class QueueStatusResponse(BaseModel):
     service_id: int
     waiting_count: int
     current_token: int | None
+    current_entry_id: int | None
     my_token: int | None
     my_position: int | None
