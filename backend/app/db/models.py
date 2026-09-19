@@ -130,3 +130,50 @@ class User(Base):
         DateTime,
         default=datetime.utcnow,
     )
+
+class QueueStatus(str, Enum):
+    WAITING = "waiting"
+    SERVING = "serving"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+
+class QueueEntry(Base):
+    __tablename__ = "queue_entries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    service_id: Mapped[int] = mapped_column(
+        ForeignKey("services.id"),
+        nullable=False,
+    )
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    token_number: Mapped[int] = mapped_column(
+        nullable=False,
+    )
+
+    status: Mapped[QueueStatus] = mapped_column(
+        SQLEnum(QueueStatus),
+        default=QueueStatus.WAITING,
+        nullable=False,
+    )
+
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+    )
+
+    called_at: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        nullable=True,
+    )
+
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        nullable=True,
+    )
